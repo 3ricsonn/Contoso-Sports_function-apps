@@ -1,0 +1,59 @@
+{
+  "scriptFile": "__init__.py",
+  "bindings": [
+    {
+      "authLevel": "anonymous",
+      "type": "httpTrigger",
+      "direction": "in",
+      "name": "req",
+      "methods": [
+        "post"
+      ]
+    },
+    {
+      "type": "cosmosDB",
+      "direction": "out",
+      "name": "resultsdbwrite",
+      "databaseName": "ChallengeResults",
+      "collectionName": "Items",
+      "createIfNotExists": "true",
+      "connectionStringSetting": "AzureCosmosDBConnectionString"
+    },
+    {
+      "type": "cosmosDB",
+      "direction": "in",
+      "name": "resultsdbread",
+      "databaseName": "ChallengeResults",
+      "collectionName": "Items",
+      "connectionStringSetting": "AzureCosmosDBConnectionString",
+      "sqlQuery": "SELECT * from c"
+    },
+    {
+      "type": "cosmosDB",
+      "direction": "in",
+      "name": "userdbread",
+      "databaseName": "Users",
+      "collectionName": "Items",
+      "connectionStringSetting": "AzureCosmosDBConnectionString",
+      "sqlQuery": "SELECT * from c"
+    },
+    {
+      "type": "cosmosDB",
+      "direction": "out",
+      "name": "userdbwrite",
+      "databaseName": "Users",
+      "collectionName": "Items",
+      "createIfNotExists": "true",
+      "connectionStringSetting": "AzureCosmosDBConnectionString"
+    },
+    {
+      "type": "cosmosDB",
+      "direction": "in",
+      "name": "challengedbread",
+      "databaseName": "Challenges",
+      "collectionName": "Items",
+      "connectionStringSetting": "AzureCosmosDBConnectionString",
+      "sqlQuery": "SELECT * from c"
+    }
+  ]
+}
