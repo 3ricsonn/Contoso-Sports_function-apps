@@ -3,47 +3,45 @@ import json
 from datetime import datetime
 
 import azure.functions as func
+from HttpQueryTrigger.challengefilter import search_duration
+
+from . import challengefilter as cf
 
 
 def main(req: func.HttpRequest, database:func.DocumentList) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
     if req.params.get("title"):
-        logging.info("Getting Challenges by title")
-        title = req.params.get("title")
-
-        found_challenges = []
-
-        if title == "NONE":
-            found_challenges = [
-                json.loads(challenge.to_json())
-                for challenge in database
-            ]
-        else:
-            for challenge in database:
-                if title.lower() in challenge["title"].lower():
-                    found_challenges.append(json.loads(challenge.to_json()))
-            
-        result_dict = {"found_challenges": found_challenges}
-
+        result_dict = cf.search_title(
+            database=database, 
+            title=req.params.get("title")
+    )
+        
     elif req.params.get("startDate") and req.params.get("endDate"):
-        logging.info("Getting Challenges by start and end Date")
-        startDate = datetime.fromisoformat(req.params.get("startDate"))
-        endDate = datetime.fromisoformat(req.params.get("endDate"))
+        result_dict = cf.search_date(
+            database=database,
+            startDate=datetime.fromisoformat(req.params.get("startDate")),
+            endDate=datetime.fromisoformat(req.params.get("endDate"))
+            )
+    
+    elif req.params.get("duration"):
+        result_dict = cf.search_duration(
+            database=database, 
+            duration=req.params.get("duration")
+        )
+    
+    elif req.params.get("difficulty"):
+        result_dict = cf.search_difficulty(
+            database=database,
+            difficulty_categories=req.params.get("difficulty")
+        )
 
-        found_challenges = []
-
-        for challenge in database:
-            if challenge["startDate"] < startDate or challenge["endDate"] > endDate:
-                found_challenges.append(json.loads(challenge.to_json()))
-
-        result_dict = {"found_challenges": found_challenges}
 
     elif req.params.get("tags[]"):
-        logging.info("Getting Challenges by tags")
-        tag_list = req.params.get("tags[]").lower().strip().split(",")
-        print(tag_list)
-        result_dict = {}
+        result_dict = cf.search_tags(
+            datebase=database,
+            tags=req.params.get("tags[]")
+        )
 
     else:
         logging.info("No valid parameter given")

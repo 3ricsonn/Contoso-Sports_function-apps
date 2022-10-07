@@ -34,13 +34,28 @@ def main(
     resultsdbwrite.set(new_challengeresult_docs)
 
     # update user score
+    new_user_docs = func.DocumentList()
+
     user = search(userdbread, "id", user_id)
     challenge_points = search(challengedbread, "id", challenge_id).get("points")
 
     user["points"] += challenge_points
     user["nChallenges"] += 1
 
-    new_user_docs = func.DocumentList()
+    if user["rivalID"]:
+        rival = search(userdbread, "id", user["rivalID"])
+
+        if rival["points"] < user["points"]:
+            dif = user["points"] - rival["points"]
+            user["points"] += dif
+
+            if rival["points"] - dif > 0:
+                rival["points"] -= dif
+            else:
+                rival["points"] = 0
+            
+            new_user_docs.append(func.Document.from_dict(rival))
+
     new_user_docs.append(func.Document.from_dict(user))
 
     userdbwrite.set(new_user_docs)
