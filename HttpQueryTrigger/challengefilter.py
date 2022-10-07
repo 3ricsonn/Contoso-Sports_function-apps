@@ -11,7 +11,7 @@ def search_title(database: func.DocumentList, title: str) -> dict:
     if title == "NONE":
         found_challenges = [
             json.loads(challenge.to_json())
-            for challenge in database if actuel(challenge)
+            for challenge in database# if actuel(challenge)
         ]
     else:
         for challenge in database:
