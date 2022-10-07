@@ -38,6 +38,7 @@ def main(
     challenge_points = search(challengedbread, "id", challenge_id).get("points")
 
     user["points"] += challenge_points
+    user["nChallenges"] += 1
 
     new_user_docs = func.DocumentList()
     new_user_docs.append(func.Document.from_dict(user))
